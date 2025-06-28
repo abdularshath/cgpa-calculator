@@ -270,9 +270,10 @@ function updateDisplay() {
     const selectedSemester = semesterInput.value;
     const filteredGrades = selectedSemester === 'all' ? sortedGrades : sortedGrades.filter(g => g.semester === selectedSemester);
 
+    // ✅ Calculate CGPA using all grades
     let totalCredits = 0;
     let totalPoints = 0;
-    filteredGrades.forEach(grade => {
+    grades.forEach(grade => {
         totalCredits += grade.credit;
         totalPoints += grade.gpa * grade.credit;
     });
@@ -314,6 +315,7 @@ function updateDisplay() {
         gradeList.appendChild(gradeElement);
     });
 
+    //Always display CGPA using all grades
     document.getElementById('totalCredits').textContent = totalCredits.toFixed(1);
     document.getElementById('totalPoints').textContent = totalPoints.toFixed(2);
     document.getElementById('cgpa').textContent = (totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '0.00');
