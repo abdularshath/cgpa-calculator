@@ -265,12 +265,10 @@ function updateDisplay() {
     gradeList.innerHTML = '';
 
     const sortedGrades = [...grades].sort((a, b) => a.semester - b.semester);
-
     const semesterInput = document.getElementById('semester');
     const selectedSemester = semesterInput.value;
     const filteredGrades = selectedSemester === 'all' ? sortedGrades : sortedGrades.filter(g => g.semester === selectedSemester);
 
-    // ✅ Calculate CGPA using all grades
     let totalCredits = 0;
     let totalPoints = 0;
     grades.forEach(grade => {
@@ -281,7 +279,15 @@ function updateDisplay() {
     updateSemesterData();
 
     let currentSemester = null;
-    filteredGrades.forEach((grade, index) => {
+    filteredGrades.forEach(grade => {
+        const actualIndex = grades.findIndex(
+            g => g.subject === grade.subject &&
+                g.semester === grade.semester &&
+                g.grade === grade.grade &&
+                g.credit === grade.credit &&
+                g.gpa === grade.gpa
+        );
+
         if (grade.semester !== currentSemester) {
             const semesterHeading = document.createElement('div');
             semesterHeading.className = 'semester-heading';
@@ -310,12 +316,11 @@ function updateDisplay() {
             <span class="grade">${grade.grade}</span>
             <span class="credit">${grade.credit}</span>
             <span class="gpa">${grade.gpa}</span>
-            <button onclick="removeGrade(${index})">Remove</button>
+            <button onclick="removeGrade(${actualIndex})">Remove</button>
         `;
         gradeList.appendChild(gradeElement);
     });
 
-    //Always display CGPA using all grades
     document.getElementById('totalCredits').textContent = totalCredits.toFixed(1);
     document.getElementById('totalPoints').textContent = totalPoints.toFixed(2);
     document.getElementById('cgpa').textContent = (totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '0.00');
