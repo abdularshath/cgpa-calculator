@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGPA Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>CGPA Calculator</h1>
+        
+        <div class="calculator">
+            <div class="input-section">
+                <div class="input-section1">
+                    <div class="student-info">
+                        <input type="text" id="studentName" placeholder="Enter your name">
+                        <button type="button" id="downloadBtn">Download Report</button>
+                    </div>
+                    <div class="grade-labels">
+                        <span>Subject</span>
+                        <span>Semester</span>
+                        <span>Grade</span>
+                        <span>Credit Hours</span>
+                    </div>
+                    <div class="grade-input">
+                        <input type="text" id="subject" placeholder="Enter subject name">
+                        <select id="semester">
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
+                        </select>
+                        <select id="grade">
+                        
+                            <option value="O">O</option>
+                            <option value="A+">A+</option>
+                            <option value="A">A</option>
+                            <option value="B+">B+</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="U">U</option>
+                        </select>
+                        <input type="number" id="credit" placeholder="Enter credit hours">
+                        <button type="button" onclick="addGrade()">Add Grade</button>
+                    </div>
+                </div>
+                
+                <div class="grade-list" id="gradeList">
+                    <!-- Grades will be added here dynamically -->
+                </div>
+            </div>
+
+            <div class="result-section">
+                <h2>Results</h2>
+                <div class="semester-results">
+                    <div class="semester-box" id="semester1">
+                        <h3>Semester 1</h3>
+                        <p>SGPA: <span id="sgpa1">0.00</span></p>
+                        <p>Total Credits: <span id="credits1">0</span></p>
+                        <p>Total Points: <span id="points1">0</span></p>
+                    </div>
+                    <div class="semester-box" id="semester2">
+                        <h3>Semester 2</h3>
+                        <p>SGPA: <span id="sgpa2">0.00</span></p>
+                        <p>Total Credits: <span id="credits2">0</span></p>
+                        <p>Total Points: <span id="points2">0</span></p>
+                    </div>
+                    <div class="semester-box" id="semester3">
+                        <h3>Semester 3</h3>
+                        <p>SGPA: <span id="sgpa3">0.00</span></p>
+                        <p>Total Credits: <span id="credits3">0</span></p>
+                        <p>Total Points: <span id="points3">0</span></p>
+                    </div>
+                    <div class="semester-box" id="semester4">
+                        <h3>Semester 4</h3>
+                        <p>SGPA: <span id="sgpa4">0.00</span></p>
+                        <p>Total Credits: <span id="credits4">0</span></p>
+                        <p>Total Points: <span id="points4">0</span></p>
+                    </div>
+                    <div class="semester-box" id="semester5">
+                        <h3>Semester 5</h3>
+                        <p>SGPA: <span id="sgpa5">0.00</span></p>
+                        <p>Total Credits: <span id="credits5">0</span></p>
+                        <p>Total Points: <span id="points5">0</span></p>
+                    </div>
+                    <div class="semester-box" id="semester6">
+                        <h3>Semester 6</h3>
+                        <p>SGPA: <span id="sgpa6">0.00</span></p>
+                        <p>Total Credits: <span id="credits6">0</span></p>
+                        <p>Total Points: <span id="points6">0</span></p>
+                    </div>
+                    <div class="semester-box" id="semester7">
+                        <h3>Semester 7</h3>
+                        <p>SGPA: <span id="sgpa7">0.00</span></p>
+                        <p>Total Credits: <span id="credits7">0</span></p>
+                        <p>Total Points: <span id="points7">0</span></p>
+                    </div>
+                    <div class="semester-box" id="semester8">
+                        <h3>Semester 8</h3>
+                        <p>SGPA: <span id="sgpa8">0.00</span></p>
+                        <p>Total Credits: <span id="credits8">0</span></p>
+                        <p>Total Points: <span id="points8">0</span></p>
+                    </div>
+                </div>
+                <div class="result-box">
+                    <p>Total Credits: <span id="totalCredits">0</span></p>
+                    <p>Total Points: <span id="totalPoints">0</span></p>
+                    <p>CGPA: <span id="cgpa">0.00</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Load jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Load jspdf-autotable plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        // Initialize jsPDF and autotable
+        window.jspdfInstance = null;
+        window.isInitialized = false;
+
+        function initializePDF() {
+            // Check if jsPDF is loaded
+            if (typeof window.jspdf === 'undefined') {
+                console.error('jsPDF library failed to load');
+                return false;
+            }
+            
+            // Initialize jsPDF instance
+            window.jspdfInstance = window.jspdf.jsPDF;
+            
+            // Add autotable plugin
+            window.jspdfInstance.prototype.autoTable = window.jspdf.autoTable;
+            
+            window.isInitialized = true;
+            console.log('jsPDF and autotable initialized successfully');
+            return true;
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            if (!initializePDF()) {
+                alert('Failed to initialize PDF libraries. Please refresh the page.');
+            }
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
